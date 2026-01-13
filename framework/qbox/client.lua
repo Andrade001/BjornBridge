@@ -3,8 +3,6 @@
 if Bridge.Framework ~= "qbox" then return end
 
 
-local QBOX = exports["qbx-core"]:GetCoreObject()
-
 local notifyColors = {
     sucesso = "success",
     aviso = "primary",
@@ -13,7 +11,7 @@ local notifyColors = {
 
 function Bridge.Functions.Notify(type, message)
     local notifyType = notifyColors[type]
-    exports.qbx_core:Notify(message, notifyType, 5000)
+    exports["qbx_core"]:Notify(message, notifyType, 5000)
 end
 
 function Bridge.Functions.SetHealth(health)

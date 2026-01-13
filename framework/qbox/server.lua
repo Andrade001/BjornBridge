@@ -2,8 +2,7 @@
 
 if Bridge.Framework ~= "qbox" then return end
 
-
-local QBOX = exports["qbx-core"]:GetCoreObject()
+local _itemsCache
 
 local notifyColors = {
     sucesso = "success",
@@ -14,11 +13,11 @@ local notifyColors = {
 
 function Bridge.Functions.Notify(type, message, source)
     local notifyType = notifyColors[type]
-    exports.qbx_core:Notify(source, message, notifyType, 5000)
+    exports["qbx_core"]:Notify(source, message, notifyType, 5000)
 end
 
 function GetPlayer(source)
-    return exports.qbx_core:GetPlayer(source)
+    return exports["qbx_core"]:GetPlayer(source)
 end
 
 function Bridge.Functions.GetPlayerId(source)
@@ -27,11 +26,11 @@ function Bridge.Functions.GetPlayerId(source)
 end
 
 function Bridge.Functions.GetSource(user_id)
-    return exports.qbx_core:GetSource(user_id)
+    return exports["qbx_core"]:GetSource(user_id)
 end
 
 function Bridge.Functions.GetUsers()
-    return exports.qbx_core:GetPlayersData()
+    return exports["qbx_core"]:GetPlayersData()
 end
 
 function Bridge.Functions.GetIdentity(source)
@@ -43,20 +42,37 @@ function Bridge.Functions.GetIdentity(source)
 end
 
 function Bridge.Functions.CheckPermission(source, permission)
-    if exports.qbx_core:HasPermission(source, permission) then
+
+    if IsPlayerAceAllowed(source, permission) then
         return true
-    else
-        local xPlayer = GetPlayer(source)
-        return xPlayer and xPlayer.PlayerData.job and xPlayer.PlayerData.job.name == permission
+    end
+
+    if exports["qbx_core"]:HasGroup(source, permission) then
+        return true
+    end
+
+    local xPlayer = GetPlayer(source)
+
+    if xPlayer.PlayerData.job and xPlayer.PlayerData.job.name == permission then
+        return true
+    end
+
+    -- Deprecated.
+    local ok, hasPerm = pcall(function()
+        return exports["qbx_core"]:HasPermission(source, permission)
+    end)
+
+    if ok and hasPerm then
+        return true
     end
 end
 
 function Bridge.Functions.CheckItem(source, item, metadata, strict)
-    return exports.ox_inventory:GetItemCount(source, item, metadata, strict)
+    return exports["ox_inventory"]:GetItemCount(source, item, metadata, strict)
 end
 
 function Bridge.Functions.RemoveItem(source, item, amount, metadata)
-    return exports.ox_inventory:RemoveItem(source, item, amount, metadata)
+    return exports["ox_inventory"]:RemoveItem(source, item, amount, metadata)
 end
 
 function Bridge.Functions.GiveItem(source, item, amount, metadata)
@@ -68,48 +84,56 @@ function Bridge.Functions.GiveItem(source, item, amount, metadata)
 end
 
 function Bridge.Functions.GetInventory(source)
-    return exports.ox_inventory:GetInventory(source)
+    return exports["ox_inventory"]:GetInventory(source)
 end
 
 function Bridge.Functions.GetInventoryWeight(source)
-    local xPlayer = GetPlayer(source)
-    return xPlayer and xPlayer.PlayerData.weight or nil
+    local inv = exports["ox_inventory"]:GetInventory(source)
+    return inv and inv.weight or 0
 end
 
 function Bridge.Functions.GetInventoryMaxWeight(source)
-    local xPlayer = GetPlayer(source)
-    return xPlayer and xPlayer.PlayerData.maxweight or nil
+    local inv = exports["ox_inventory"]:GetInventory(source)
+    return inv and inv.maxWeight or 0
+end
+
+
+function GetOxItems()
+    if not _itemsCache then
+        _itemsCache = exports["ox_inventory"]:Items() or {}
+    end
+    return _itemsCache
 end
 
 function Bridge.Functions.GetItemWeight(item)
-    if QBOX.Shared and QBOX.Shared.Items and QBOX.Shared.Items[item] then
-        return QBOX.Shared.Items[item].weight
-    end
+    local name = (type(item) == 'table' and (item.name or item.item)) or item
+    if not name then return 0 end
+
+    local items = GetOxItems()
+    local data = items[name]
+    return (data and data.weight) or 0
 end
 
 function Bridge.Functions.GetItemName(item)
-    if QBOX.Shared and QBOX.Shared.Items and QBOX.Shared.Items[item] then
-        return QBOX.Shared.Items[item].label or item
-    end
-    return item
+    local name = (type(item) == 'table' and (item.name or item.item)) or item
+    if not name then return item end
+
+    local items = GetOxItems()
+    local data = items[name]
+    return (data and (data.label or data.name)) or name
 end
+
 
 function Bridge.Functions.GetItemIndex(item)
     return item
 end
 
 function Bridge.Functions.RemoveMoney(source, amount)
-    local xPlayer = GetPlayer(source)
-    if xPlayer then
-        return xPlayer.Functions.RemoveMoney("cash", amount)
-    end
+    return exports["qbx_core"]:RemoveMoney(source, "cash", amount)
 end
 
 function Bridge.Functions.GiveMoney(source, amount)
-    local xPlayer = GetPlayer(source)
-    if xPlayer then
-        return xPlayer.Functions.AddMoney("cash", amount)
-    end
+    return exports["qbx_core"]:AddMoney(source, "cash", amount)
 end
 
 function Bridge.Functions.Revive(source, health)
