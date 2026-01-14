@@ -1,6 +1,6 @@
 ---@diagnostic disable: duplicate-set-field
 
-if Bridge.Framework ~= "creativenetwork" then return end
+if Bridge.Framework ~= "creativeenchanted" then return end
 
 
 local Tunnel = module("vrp", "lib/Tunnel")
