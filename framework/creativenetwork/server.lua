@@ -68,7 +68,9 @@ end
 
 function Bridge.Functions.RemoveItem(source, item, amount)
     local user_id = Bridge.Functions.GetPlayerId(source)
-    return vRP.TakeItem(user_id, item, amount)
+    local itemData = vRP.InventoryItemAmount(user_id, item)
+    local itemName = itemData and itemData[2] or item
+    return vRP.TakeItem(user_id, itemName, amount)
 end
 
 function Bridge.Functions.GiveItem(source, item, amount)
