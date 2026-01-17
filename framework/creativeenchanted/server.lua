@@ -62,7 +62,7 @@ end
 
 function Bridge.Functions.CheckItem(source, item)
     local user_id = Bridge.Functions.GetPlayerId(source)
-    local amount = vRP.ItemAmount(user_id, item)
+    local amount = vRP.InventoryItemAmount(user_id, item)
     return type(amount) == "table" and amount[1] or amount
 end
 
