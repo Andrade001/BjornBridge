@@ -1,7 +1,7 @@
 fx_version "cerulean"
 game "gta5"
 lua54 "yes"
-version "1.0.0"
+version "1.0.2"
 
 author "Bjorn Ironside (bjorn_01)"
 description "Discord: https://discord.gg/PJRRHQtavX"

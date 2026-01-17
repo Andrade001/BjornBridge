@@ -27,7 +27,7 @@ CreateThread(function()
             else
                 print(string.format("^6[BjornBridge]^0 - %s ^0", Lang["updateError"]))
             end
-        end, "GET", "", {})
+        end, "GET", "", { ["User-Agent"] = "BjornBridge" })
     end
 end)
 
