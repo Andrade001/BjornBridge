@@ -61,7 +61,7 @@ end
 function Bridge.Functions.GetIdentity(source)
     local user_id = Bridge.Functions.GetPlayerId(source)
     local identity = vRP.userIdentity(user_id)
-    return identity and identity.name or nil
+    return identity and identity.name or "Unknown"
 end
 
 function Bridge.Functions.CheckPermission(source, permission)
@@ -76,8 +76,16 @@ function Bridge.Functions.CheckItem(source, item)
 end
 
 function Bridge.Functions.RemoveItem(source, item, amount)
-    local user_id = Bridge.Functions.GetPlayerId(source)
-    return vRP.tryGetInventoryItem(user_id, item, amount)
+    local userId = Bridge.Functions.GetPlayerId(source)
+    local hasTimestampSuffix = item:match("^.+%-%d+$") ~= nil
+    local itemToRemove = item
+
+    if not hasTimestampSuffix then
+        local itemData = vRP.getInventoryItemAmount(userId, item)
+        itemToRemove = (itemData and itemData[2]) or item
+    end
+
+    return vRP.tryGetInventoryItem(userId, itemToRemove, amount)
 end
 
 function Bridge.Functions.GiveItem(source, item, amount)
@@ -110,6 +118,29 @@ end
 
 function Bridge.Functions.GetItemIndex(item)
     return itemIndex(item)
+end
+
+function Bridge.Functions.GetItemDurabilityPercent(item)
+    local itemName, timestampStr = table.unpack(splitString(item.item))
+    local durabilityDays = itemDurability(itemName)
+
+    if not durabilityDays then
+        return 100
+    end
+
+    local timestamp = tonumber(timestampStr)
+    if timestamp then
+        local maxTime = 86400 * durabilityDays
+        local elapsedTime = os.time() - timestamp
+        local remaining = (maxTime - elapsedTime) / maxTime
+
+        if remaining < 0 then remaining = 0 end
+        if remaining > 1 then remaining = 1 end
+
+        return remaining * 100
+    end
+
+    return 0
 end
 
 function Bridge.Functions.RemoveMoney(source, amount)

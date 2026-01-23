@@ -2,6 +2,7 @@
 
 if Bridge.Framework ~= "qbox" then return end
 
+
 local _itemsCache
 
 local notifyColors = {
@@ -9,7 +10,6 @@ local notifyColors = {
     aviso = "warning",
     negado = "error"
 }
-
 
 function Bridge.Functions.Notify(type, message, source)
     local notifyType = notifyColors[type]
@@ -84,8 +84,29 @@ function Bridge.Functions.GiveItem(source, item, amount, metadata)
 end
 
 function Bridge.Functions.GetInventory(source)
-    return exports["ox_inventory"]:GetInventory(source)
+    if Bridge.Config.Inventory == "default" or Bridge.Config.Inventory == "ox_inventory" then
+        local items = exports["ox_inventory"]:GetInventoryItems(source) or {}
+        local formattedInv = {}
+
+        for _, itemData in pairs(items) do
+            if itemData and itemData.name then
+                local itemName = itemData.name
+                local itemAmount = itemData.count or itemData.amount or 0
+
+                formattedInv[#formattedInv + 1] = {
+                    name = itemName,
+                    label = itemData.label or Bridge.Functions.GetItemName(itemName),
+                    amount = itemAmount,
+                    slot = itemData.slot,
+                    metadata = itemData.metadata
+                }
+            end
+        end
+
+        return formattedInv
+    end
 end
+
 
 function Bridge.Functions.GetInventoryWeight(source)
     local inv = exports["ox_inventory"]:GetInventory(source)
@@ -95,14 +116,6 @@ end
 function Bridge.Functions.GetInventoryMaxWeight(source)
     local inv = exports["ox_inventory"]:GetInventory(source)
     return inv and inv.maxWeight or 0
-end
-
-
-function GetOxItems()
-    if not _itemsCache then
-        _itemsCache = exports["ox_inventory"]:Items() or {}
-    end
-    return _itemsCache
 end
 
 function Bridge.Functions.GetItemWeight(item)
@@ -123,9 +136,53 @@ function Bridge.Functions.GetItemName(item)
     return (data and (data.label or data.name)) or name
 end
 
-
 function Bridge.Functions.GetItemIndex(item)
     return item
+end
+
+function Bridge.Functions.GetItemDurabilityPercent(item)
+    if Bridge.Config.Inventory == "default" or Bridge.Config.Inventory == "ox_inventory" then
+
+        if type(item) ~= "table" then return 100 end
+
+        local name = item.name or item.item
+        local meta = item.metadata or item.info or item.data
+
+        local raw = item.durability or item.quality or item.health
+        if type(meta) == "table" then
+            raw = raw or meta.durability or meta.quality or meta.health
+        end
+
+        if type(raw) ~= "number" then return 100 end
+
+        if raw >= 0 and raw <= 1 then raw = raw * 100 end
+
+        if raw >= 0 and raw <= 100 then
+            return math.floor(math.max(0, math.min(100, raw)))
+        end
+
+        local expiresAt = raw
+        if expiresAt > 20000000000 then
+            expiresAt = math.floor(expiresAt / 1000)
+        end
+
+        local remaining = expiresAt - os.time()
+        if remaining <= 0 then
+            return 0
+        end
+
+        if name and exports.ox_inventory and exports.ox_inventory.Items then
+            local def = exports.ox_inventory:Items(name)
+            local degrade = def and def.degrade
+            if type(degrade) == "number" and degrade > 0 then
+                local total = degrade * 60
+                local pct = (remaining / total) * 100
+                return math.floor(math.max(0, math.min(100, pct)))
+            end
+        end
+
+        return 100
+    end
 end
 
 function Bridge.Functions.RemoveMoney(source, amount)
@@ -171,4 +228,11 @@ end
 
 function Bridge.Functions.Execute(action, data)
     return Bridge.DB.Execute(action, data)
+end
+
+function GetOxItems()
+    if not _itemsCache then
+        _itemsCache = exports["ox_inventory"]:Items() or {}
+    end
+    return _itemsCache
 end

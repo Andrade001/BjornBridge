@@ -104,6 +104,10 @@ function Bridge.Functions.GetItemIndex(item)
     return (vRP.itemIndexList and vRP.itemIndexList(item)) or item
 end
 
+function Bridge.Functions.GetItemDurabilityPercent(item)
+    return 100
+end
+
 function Bridge.Functions.RemoveMoney(source, amount)
     local user_id = Bridge.Functions.GetPlayerId(source)
     return vRP.tryFullPayment(user_id, amount) or vRP.tryPayment(user_id, amount)
