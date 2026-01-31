@@ -32,3 +32,5 @@ files {
     "web/*.css",
     "web/*.js",
 }
+
+dependency "mysql-async"
