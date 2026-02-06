@@ -50,7 +50,7 @@ local function startRequestTimeout(requestId, timeoutMs)
     end
 end
 
-Bridge.Callback.RegisterClient("bridge:prompt", function(requestId, message, placeholder)
+Bridge.Callback.RegisterClient("BjornBridge:prompt", function(requestId, message, placeholder)
     if promptState.requestId then
         closePrompt(nil)
     end
@@ -66,7 +66,7 @@ Bridge.Callback.RegisterClient("bridge:prompt", function(requestId, message, pla
     SetNuiFocus(true, true)
 end)
 
-Bridge.Callback.RegisterClient("bridge:request", function(requestId, message, timeoutMs)
+Bridge.Callback.RegisterClient("BjornBridge:request", function(requestId, message, timeoutMs)
     if requestState and requestState.requestId then
         closeRequest(false)
     end
@@ -108,5 +108,5 @@ RegisterCommand(declineCommand, function()
     end
 end, false)
 
-RegisterKeyMapping(acceptCommand, "BjornBridge: Aceitar request", "keyboard", acceptDefault)
-RegisterKeyMapping(declineCommand, "BjornBridge: Recusar request", "keyboard", declineDefault)
+RegisterKeyMapping(acceptCommand, "Aceitar request", "keyboard", acceptDefault)
+RegisterKeyMapping(declineCommand, "Recusar request", "keyboard", declineDefault)

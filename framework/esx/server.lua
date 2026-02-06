@@ -262,7 +262,7 @@ function Bridge.Functions.SetHealth(source, health)
 end
 
 function Bridge.Functions.Prompt(source, message, placeholder)
-    local text = Bridge.Callback.AwaitClient(source, "bridge:prompt", nil, message, placeholder or "")
+    local text = Bridge.Callback.AwaitClient(source, "BjornBridge:prompt", nil, message, placeholder or "")
     if type(text) == "string" then
         text = text:gsub("^%s*(.-)%s*$", "%1")
         if text == "" then return nil end
@@ -273,7 +273,7 @@ end
 
 function Bridge.Functions.Request(source, message, timeoutSeconds)
     local timeoutMs = ((timeoutSeconds or 30) * 1000)
-    local accepted = Bridge.Callback.AwaitClient(source, "bridge:request", timeoutMs, message, timeoutMs)
+    local accepted = Bridge.Callback.AwaitClient(source, "BjornBridge:request", timeoutMs, message, timeoutMs)
     return accepted == true
 end
 
