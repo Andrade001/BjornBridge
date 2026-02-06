@@ -1,6 +1,7 @@
 Bridge.Callback = Bridge.Callback or {}
 
 local pending = {}
+local serverHandlers = {}
 
 local function generateRequestId(src)
     local requestId
@@ -9,6 +10,41 @@ local function generateRequestId(src)
     until not pending[requestId]
     return requestId
 end
+
+function Bridge.Callback.RegisterServer(name, fn)
+    serverHandlers[name] = fn
+end
+
+RegisterNetEvent("BjornBridge:callbackServer", function(requestId, name, ...)
+    local src = source
+    local handler = serverHandlers[name]
+
+    if not handler then
+        TriggerClientEvent("BjornBridge:callbackServerResult", src, requestId, nil)
+        return
+    end
+
+    local responded = false
+    local function reply(...)
+        if responded then return end
+        responded = true
+        TriggerClientEvent("BjornBridge:callbackServerResult", src, requestId, ...)
+    end
+
+    local ok, a, b, c, d, e = pcall(handler, src, reply, ...)
+    if not ok then
+        reply(nil)
+        return
+    end
+
+    if not responded then
+        if a ~= nil or b ~= nil or c ~= nil or d ~= nil or e ~= nil then
+            reply(a, b, c, d, e)
+        else
+            reply(nil)
+        end
+    end
+end)
 
 function Bridge.Callback.AwaitClient(source, name, timeoutMs, ...)
     local requestId = generateRequestId(source)
@@ -48,3 +84,12 @@ AddEventHandler("playerDropped", function()
         end
     end
 end)
+
+AddEventHandler("onResourceStop", function(res)
+    if res ~= GetCurrentResourceName() then return end
+    for requestId, entry in pairs(pending) do
+        pending[requestId] = nil
+        entry.promise:resolve(nil)
+    end
+end)
+
