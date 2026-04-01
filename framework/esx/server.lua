@@ -1,6 +1,6 @@
 ---@diagnostic disable: duplicate-set-field
 
-if Bridge.Framework ~= "esx" then return end
+if not string.find(Bridge.Framework, "esx") then return end
 
 
 local ESX = exports["es_extended"] and exports["es_extended"].getSharedObject()

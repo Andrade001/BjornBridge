@@ -297,3 +297,98 @@ body {
     font-size: 13px;
     color: var(--muted);
 }
+
+
+.instruction-bar {
+    position: fixed;
+    left: 50%;
+    bottom: 5vh;
+    transform: translateX(-50%);
+    display: none;
+    align-items: center;
+    gap: 14px;
+    padding: 0;
+    pointer-events: none;
+    z-index: 10000;
+}
+
+.instruction-bar.is-visible {
+    display: flex;
+}
+
+.instruction-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 12px;
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.5);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.instruction-keys {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.instruction-keycap {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 30px;
+    min-width: 30px;
+    padding: 0 8px;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+    background: rgba(65, 65, 65, 0.95);
+    border: 1px solid rgba(247, 247, 247, 0.4);
+    text-transform: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.instruction-keycap--long {
+    min-width: 56px;
+    padding: 0 12px;
+}
+
+.instruction-keycap--red {
+    background: rgba(118, 28, 28, 0.5);
+    border-color: rgba(165, 45, 45, 0.95);
+}
+
+.instruction-keycap--green {
+    background: rgba(26, 95, 64, 0.5);
+    border-color: rgba(44, 140, 95, 0.95);
+}
+
+.instruction-desc {
+    font-size: 14px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.85);
+    white-space: nowrap;
+}
+
+@media (max-width: 1280px) {
+    .instruction-bar {
+        gap: 12px;
+        bottom: 2.5vh;
+    }
+
+    .instruction-chip {
+        gap: 10px;
+        padding: 7px 10px;
+    }
+
+    .instruction-keycap {
+        height: 28px;
+        min-width: 28px;
+        font-size: 12px;
+    }
+
+    .instruction-desc {
+        font-size: 13px;
+    }
+}

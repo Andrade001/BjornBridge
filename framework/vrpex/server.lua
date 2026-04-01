@@ -1,6 +1,6 @@
 ---@diagnostic disable: duplicate-set-field
 
-if Bridge.Framework ~= "vrpex" and Bridge.Framework ~= "vrp" then return end
+if not string.find(Bridge.Framework, "vrpex") and not string.find(Bridge.Framework, "vrp") then return end
 
 local libLoaded = false
 local count = GetNumResourceMetadata(Bridge.ResourceName, "shared_script") or 0

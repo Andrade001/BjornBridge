@@ -1,6 +1,6 @@
 ---@diagnostic disable: duplicate-set-field
 
-if Bridge.Framework ~= "creativev6" then return end
+if not string.find(Bridge.Framework, "creativev6") then return end
 
 
 local Tunnel = module("vrp", "lib/Tunnel")

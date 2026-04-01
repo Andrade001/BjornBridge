@@ -1,6 +1,6 @@
 ---@diagnostic disable: duplicate-set-field
 
-if Bridge.Framework ~= "qbcore" then return end
+if not string.find(Bridge.Framework, "qbcore") then return end
 
 
 local QBCore = exports["qb-core"]:GetCoreObject()

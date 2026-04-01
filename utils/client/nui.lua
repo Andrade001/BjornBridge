@@ -110,3 +110,48 @@ end, false)
 
 RegisterKeyMapping(acceptCommand, "Aceitar request", "keyboard", acceptDefault)
 RegisterKeyMapping(declineCommand, "Recusar request", "keyboard", declineDefault)
+
+
+local InstructionKeys = {}
+
+local function renderInstructionKeys()
+    local binds = {}
+
+    for _, item in pairs(InstructionKeys) do
+        binds[#binds + 1] = {
+            keys = item.keys,
+            desc = item.desc or "",
+            style = item.style or ""
+        }
+    end
+
+    if #binds > 0 then
+        SendNUIMessage({ action = "openInstructionKeys", binds = binds })
+    else
+        SendNUIMessage({ action = "closeInstructionKeys" })
+    end
+end
+
+function Bridge.Functions.AddInstructionKey(id, keys, desc, style)
+    if not id or id == "" then return end
+
+    InstructionKeys[id] = {
+        keys = keys,
+        desc = desc,
+        style = style
+    }
+
+    renderInstructionKeys()
+end
+
+function Bridge.Functions.RemoveInstructionKey(id)
+    if not id or id == "" then return end
+
+    InstructionKeys[id] = nil
+    renderInstructionKeys()
+end
+
+function Bridge.Functions.ClearInstructionKeys()
+    InstructionKeys = {}
+    renderInstructionKeys()
+end

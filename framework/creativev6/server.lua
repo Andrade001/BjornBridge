@@ -1,6 +1,6 @@
 ---@diagnostic disable: duplicate-set-field
 
-if Bridge.Framework ~= "creativev6" then return end
+if not string.find(Bridge.Framework, "creativev6") then return end
 
 local libLoaded = false
 local count = GetNumResourceMetadata(Bridge.ResourceName, "shared_script") or 0

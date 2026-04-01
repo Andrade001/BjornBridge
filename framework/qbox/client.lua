@@ -1,6 +1,6 @@
 ---@diagnostic disable: duplicate-set-field
 
-if Bridge.Framework ~= "qbox" then return end
+if not string.find(Bridge.Framework, "qbox") then return end
 
 
 local notifyColors = {
