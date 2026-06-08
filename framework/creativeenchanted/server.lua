@@ -111,29 +111,6 @@ function Bridge.Functions.GetItemIndex(item)
     return ItemIndex(item)
 end
 
-function Bridge.Functions.GetItemDurabilityPercent(item)
-    local itemName, timestampStr = table.unpack(splitString(item.item))
-    local durabilityHours = ItemDurability(itemName)
-
-    if not durabilityHours then
-        return 100
-    end
-
-    local timestamp = tonumber(timestampStr)
-    if timestamp then
-        local maxTime = 3600 * durabilityHours
-        local elapsedTime = os.time() - timestamp
-        local remaining = (maxTime - elapsedTime) / maxTime
-
-        if remaining < 0 then remaining = 0 end
-        if remaining > 1 then remaining = 1 end
-
-        return remaining * 100
-    end
-
-    return 0
-end
-
 function Bridge.Functions.RemoveMoney(source, amount)
     local user_id = Bridge.Functions.GetPlayerId(source)
     return vRP.PaymentFull(user_id, amount)

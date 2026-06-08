@@ -1,7 +1,7 @@
 fx_version "cerulean"
 game "gta5"
 lua54 "yes"
-version "1.0.4"
+version "1.0.5"
 
 author "Bjorn Ironside (bjorn_01)"
 description "Discord: https://discord.gg/PJRRHQtavX"
@@ -13,18 +13,18 @@ shared_scripts {
     -- "@vrp/lib/utils.lua",           ----- Se utilizar vRP, vRPex ou Creative descomente esta linha. (If you use vRP, vRPex, or Creative, uncomment this line.)
     "config.lua",
     "language/*.lua",
-    "utils/shared.lua"
+    "utils/shared.lua",
 }
 
 server_scripts {
     "@mysql-async/lib/MySQL.lua",
     "utils/server/*.lua",
-    "framework/**/server.lua"
+    "framework/**/server.lua",
 }
 
 client_scripts {
     "utils/client/*.lua",
-    "framework/**/client.lua"
+    "framework/**/client.lua",
 }
 
 files {
@@ -33,4 +33,7 @@ files {
     "web/*.js",
 }
 
-dependency "mysql-async"
+dependencies {
+    "/onesync",
+    "mysql-async",
+}

@@ -3,11 +3,6 @@
 if not string.find(Bridge.Framework, "vrpex") then return end
 
 
-local Tunnel = module("vrp", "lib/Tunnel")
-local Proxy = module("vrp", "lib/Proxy")
-local vRP = Proxy.getInterface("vRP")
-local vRPclient = Tunnel.getInterface("vRP")
-
 local notifyColors = {
     sucesso = "sucesso",
     aviso = "aviso",
@@ -16,13 +11,13 @@ local notifyColors = {
 
 function Bridge.Functions.Notify(type, message)
     local color = notifyColors[type]
-    TriggerEvent("Notify", color, message, 5000)
+    TriggerEvent('Notify', color, message, 10)
 end
 
 function Bridge.Functions.SetHealth(health)
-    vRPclient.setHealth(health or 200)
+    TriggerEvent('net.setEntityHealth', health)
 end
 
 RegisterNetEvent("BjornBridge:client:setHealth", function(health)
-    Bridge.Functions.SetHealth(health)
+    TriggerEvent('net.setEntityHealth', health)
 end)

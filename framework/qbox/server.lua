@@ -140,51 +140,6 @@ function Bridge.Functions.GetItemIndex(item)
     return item
 end
 
-function Bridge.Functions.GetItemDurabilityPercent(item)
-    if Bridge.Config.Inventory == "default" or Bridge.Config.Inventory == "ox_inventory" then
-
-        if type(item) ~= "table" then return 100 end
-
-        local name = item.name or item.item
-        local meta = item.metadata or item.info or item.data
-
-        local raw = item.durability or item.quality or item.health
-        if type(meta) == "table" then
-            raw = raw or meta.durability or meta.quality or meta.health
-        end
-
-        if type(raw) ~= "number" then return 100 end
-
-        if raw >= 0 and raw <= 1 then raw = raw * 100 end
-
-        if raw >= 0 and raw <= 100 then
-            return math.floor(math.max(0, math.min(100, raw)))
-        end
-
-        local expiresAt = raw
-        if expiresAt > 20000000000 then
-            expiresAt = math.floor(expiresAt / 1000)
-        end
-
-        local remaining = expiresAt - os.time()
-        if remaining <= 0 then
-            return 0
-        end
-
-        if name and exports.ox_inventory and exports.ox_inventory.Items then
-            local def = exports.ox_inventory:Items(name)
-            local degrade = def and def.degrade
-            if type(degrade) == "number" and degrade > 0 then
-                local total = degrade * 60
-                local pct = (remaining / total) * 100
-                return math.floor(math.max(0, math.min(100, pct)))
-            end
-        end
-
-        return 100
-    end
-end
-
 function Bridge.Functions.RemoveMoney(source, amount)
     return exports["qbx_core"]:RemoveMoney(source, "cash", amount)
 end
