@@ -21,9 +21,10 @@ permitindo a integração com qualquer resource ou framework externa.
 - vRP
 - vRPex
 - Creative (V5, V6, Network e Enchanted)
-- Esx
-- QBcore
-- Qbox
+- Esx (Em testes)
+- QBcore (Em testes)
+- Qbox (Em testes)
+- Tnet (Em testes)
 
 
 ## 🔗 Links:
